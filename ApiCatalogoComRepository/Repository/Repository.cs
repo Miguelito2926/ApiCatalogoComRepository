@@ -35,5 +35,6 @@ namespace ApiCatalogoComRepository.Repository
         {
             _context.Set<T>().Remove(entity);
         }
+
     }
 }
