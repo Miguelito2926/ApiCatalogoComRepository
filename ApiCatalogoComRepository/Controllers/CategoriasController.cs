@@ -1,6 +1,6 @@
 ﻿using ApiCatalogoComRepository.Context;
 using ApiCatalogoComRepository.Models;
-
+using ApiCatalogoComRepository.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,12 +11,12 @@ namespace ApiCatalogoComRepository.Controllers;
 public class CategoriasController : ControllerBase
 {
     // Declaração do contexto do banco de dados
-    private readonly DbCatalogoContext _context;
+    private readonly IUnitOfWork _uof;
 
     // Construtor que recebe o contexto do banco de dados como parâmetro
-    public CategoriasController(DbCatalogoContext context)
+    public CategoriasController(IUnitOfWork context)
     {
-        _context = context;
+        _uof = context;
     }
 
     // Endpoint para obter todas as categorias com seus produtos
@@ -25,10 +25,7 @@ public class CategoriasController : ControllerBase
     {
         try
         {
-            // Exemplo de método sem filtro, não é uma boa prática
-            // return _context.Categorias.Include(p => p.Produtos).ToList();
-            // Exemplo de método com filtro, boa prática de consulta de lista
-            return _context.Categorias.Include(p => p.Produtos).Where(c => c.CategoriaId <= 10).ToList();
+            return _uof.CategoriaRepository.GetCategoriasProdutos().ToList(); 
         }
         catch (Exception)
         {
@@ -43,7 +40,7 @@ public class CategoriasController : ControllerBase
     public ActionResult<IEnumerable<Categoria>> GetAll()
     {
         // Utilizando AsNoTracking para consultas que não precisam rastrear alterações
-        return _context.Categorias.AsNoTracking().ToList();
+        return _uof.CategoriaRepository.Get().ToList();
     }
 
     // Endpoint para obter uma categoria por ID usando restrição de rota definindo que espera um ID do tipo inteiro maior que 0
@@ -52,7 +49,7 @@ public class CategoriasController : ControllerBase
     {
         try
         {
-            var categoria = _context.Categorias.FirstOrDefault(p => p.CategoriaId == id);
+            var categoria = _uof.CategoriaRepository.GetById(p => p.CategoriaId == id);
             if (categoria == null)
             {
                 // Retornando NotFound com uma mensagem personalizada
@@ -81,8 +78,8 @@ public class CategoriasController : ControllerBase
                 // Retornando BadRequest com uma mensagem personalizada
                 return BadRequest("Bad Request. Campos obrigatórios de entrada não enviados ou erros de validação dos campos de entrada.");
             }
-            _context.Categorias.Add(categoria);
-            _context.SaveChanges();
+            _uof.CategoriaRepository.Add(categoria);
+            _uof.Commit();
             // Utilizando CreatedAtRouteResult para retornar um código 201 com a rota de obtenção da categoria criada
             return new CreatedAtRouteResult("ObterCategoria",
                     new { id = categoria.CategoriaId }, categoria);
@@ -104,8 +101,8 @@ public class CategoriasController : ControllerBase
             // Retornando BadRequest com uma mensagem personalizada
             return BadRequest("Bad Request. Campos obrigatórios de entrada não enviados ou erros de validação dos campos de entrada.");
         }
-        _context.Entry(categoria).State = EntityState.Modified;
-        _context.SaveChanges();
+        _uof.CategoriaRepository.Update(categoria);
+        _uof.Commit();
 
         // Retornando Ok com a categoria modificada
         return Ok(categoria);
@@ -117,15 +114,15 @@ public class CategoriasController : ControllerBase
     {
         try
         {
-            var categoria = _context.Categorias.FirstOrDefault(p => p.CategoriaId == id);
+            var categoria = _uof.CategoriaRepository.GetById(p => p.CategoriaId == id);
 
             if (categoria == null)
             {
                 // Retornando NotFound com uma mensagem personalizada
                 return NotFound("Recurso não encontrado.");
             }
-            _context.Categorias.Remove(categoria);
-            _context.SaveChanges();
+            _uof.CategoriaRepository.Delete(categoria);
+            _uof.Commit();
 
             // Retornando Ok com a categoria removida
             return Ok(categoria);
