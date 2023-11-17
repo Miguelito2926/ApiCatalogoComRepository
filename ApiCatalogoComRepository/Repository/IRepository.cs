@@ -4,7 +4,7 @@ namespace ApiCatalogoComRepository.Repository
 {
     public interface IRepository<T>
     {
-        IQueryable<T> GetAll();
+        IQueryable<T> Get();
         T GetById(Expression<Func<T, bool>> predicate);
         void Add(T entity);
         void Update(T entity);

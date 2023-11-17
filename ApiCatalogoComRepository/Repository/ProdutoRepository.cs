@@ -7,7 +7,6 @@ namespace ApiCatalogoComRepository.Repository
     {
         public ProdutoRepository(DbCatalogoContext contexto) : base(contexto)
         {
-
         }
 
         public IEnumerable<Produto> GetProdutosPorPreco()

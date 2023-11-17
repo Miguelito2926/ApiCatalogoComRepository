@@ -31,6 +31,3 @@ public class DbCatalogoContext : DbContext
             .HasForeignKey(c => c.CategoriaId);
     }
 }
-}
-
-}

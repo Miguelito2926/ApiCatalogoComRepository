@@ -2,7 +2,7 @@
 
 namespace ApiCatalogoComRepository.Repository
 {
-    public class UnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private ProdutoRepository produtoRepository;
         private CategoriaRepository categoriaRepository;
@@ -15,12 +15,12 @@ namespace ApiCatalogoComRepository.Repository
 
         public IProdutoRepository ProdutoRepository
         {
-            get { return produtoRepository = produtoRepository ?? new ProdutoRepository(_context); }
+            get { return produtoRepository = produtoRepository ?? new ProdutoRepository(_context);}
         }
 
         public ICategoriaRepository CategoriaRepository
         {
-            get { return categoriaRepository = categoriaRepository ?? new CategoriaRepository(_context); }
+            get { return categoriaRepository = categoriaRepository ?? new CategoriaRepository(_context);}
         }
         public void Commit()
         {

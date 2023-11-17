@@ -6,7 +6,7 @@ namespace ApiCatalogoComRepository.Repository
 {
     public class CategoriaRepository : Repository<Categoria>, ICategoriaRepository
     {
-        public CategoriaRepository(DbCatalogoContext contexto) : base(contexto)
+        public CategoriaRepository(DbCatalogoContext context) : base(context)
         {
 
         }
