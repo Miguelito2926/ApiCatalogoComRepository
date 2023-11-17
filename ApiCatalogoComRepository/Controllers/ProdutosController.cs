@@ -1,5 +1,6 @@
 ﻿using ApiCatalogoComRepository.Context;
 using ApiCatalogoComRepository.Models;
+using ApiCatalogoComRepository.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,38 +10,20 @@ namespace ApiCatalogoComRepository.Controllers;
 [ApiController]
 public class ProdutosController : ControllerBase
 {
-    private readonly DbCatalogoContext _context;
-    public ProdutosController(DbCatalogoContext context) // injeção de dependencia
+    private readonly IUnitOfWork _uof;
+    public ProdutosController(IUnitOfWork contexto) // injeção de dependencia
     {
-        _context = context;
+        _uof = contexto;
         // Inicializa o controlador com o contexto do banco de dados.
     }
 
     [HttpGet]
     public ActionResult<IEnumerable<Produto>> Get()
     {
-        try
-        {
-            // Método que responde a solicitações HTTP GET para listar produtos.
-            var produtos = _context.Produtos.Take(10).AsNoTracking().ToList();
-            // Obtém todos os produtos do banco de dados.
-            //AsNotTracking método para melhorar o desempenho das consultas,
-            //evita armazenar no cache, usarpara consulta somente leituras sem necessidade  de alterar dados
-            if (produtos is null)
-            {
-                return StatusCode(StatusCodes.Status404NotFound, "Recurso não encontrado.");
-                // Retorna um código de resposta "404 Not Found"
-                // com uma mensagem se não houver produtos.
-            }
-            return produtos;
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                "Internal Server Error. Solicitação não enviada. Precisa ser executada novamente.");
-        }
+        return _uof.ProdutoRepository.Get().ToList();        
     }
 
+  
     // Endpoint para obter uma produto por ID usando restrição de rota definindo que espera um ID do tipo inteiro maior que 0
     [HttpGet("{id:int:min(1)}", Name = "ObterProduto")]
     public ActionResult<Produto> Get(int id)
@@ -48,7 +31,7 @@ public class ProdutosController : ControllerBase
         try
         {
             // Método que responde a solicitações HTTP GET para obter um produto específico por ID.
-            var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+            var produto = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
             if (produto is null)
             {
                 return StatusCode(StatusCodes.Status404NotFound, "Recurso não encontrado.");
@@ -72,8 +55,8 @@ public class ProdutosController : ControllerBase
             {
                 return BadRequest("Bad Request. Campos obrigatórios de entrada não enviados ou erros de validação dos campos de entrada.");
             }
-            _context.Produtos.Add(produto);
-            _context.SaveChanges();
+            _uof.ProdutoRepository.Add(produto);
+            _uof.Commit();
             return new CreatedAtRouteResult("ObterProduto",
                 new { id = produto.ProdutoId }, produto);
         }
@@ -95,10 +78,9 @@ public class ProdutosController : ControllerBase
             {
                 return BadRequest("Bad Request. Campos obrigatórios de entrada não enviados ou erros de validação dos campos de entrada.");
             }
-            _context.Entry(produto).State = EntityState.Modified;
-            _context.SaveChanges();
-
-            return Ok(produto);
+            _uof.ProdutoRepository.Update(produto);
+            _uof.Commit();
+            return Ok();
         }
         catch (Exception)
         {
@@ -114,13 +96,13 @@ public class ProdutosController : ControllerBase
         try
         {
             // Método que responde a solicitações HTTP DELETE para excluir um produto por ID.
-            var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+            var produto = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
             if (produto is null)
             {
                 return StatusCode(StatusCodes.Status404NotFound, "Recurso não encontrado.");
             }
-            _context.Produtos.Remove(produto);
-            _context.SaveChanges();
+            _uof.ProdutoRepository.Delete(produto);
+            _uof.Commit();
             return Ok(produto);
         }
         catch (Exception)
