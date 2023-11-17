@@ -1,6 +1,9 @@
-﻿namespace ApiCatalogoComRepository.Repository
+﻿
+using Microsoft.EntityFrameworkCore;
+
+namespace ApiCatalogoComRepository.Repository
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork 
     {
         IProdutoRepository ProdutoRepository { get; }
         ICategoriaRepository CategoriaRepository { get; }

@@ -17,6 +17,12 @@ public class ProdutosController : ControllerBase
         // Inicializa o controlador com o contexto do banco de dados.
     }
 
+    [HttpGet("menorpreco")]
+    public ActionResult<IEnumerable<Produto>> GetProdutosPrecos()
+    {
+        return _uof.ProdutoRepository.GetProdutosPorPreco().ToList();
+    }
+
     [HttpGet]
     public ActionResult<IEnumerable<Produto>> Get()
     {

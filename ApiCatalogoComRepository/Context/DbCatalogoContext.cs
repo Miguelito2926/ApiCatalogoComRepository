@@ -26,7 +26,7 @@ public class DbCatalogoContext : DbContext
         modelBuilder.Entity<Produto>().Property(c => c.Preco).HasPrecision(14, 2);
 
         // Definição do relacionamento um-para-muitos entre Produto e Categoria
-        modelBuilder.Entity<Produto>().HasOne<Categoria>(c => c.Categoria)
+        modelBuilder.Entity<Produto>().HasOne(c => c.Categoria)
             .WithMany(p => p.Produtos)
             .HasForeignKey(c => c.CategoriaId);
     }
