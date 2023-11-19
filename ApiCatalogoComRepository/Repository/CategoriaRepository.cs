@@ -1,5 +1,6 @@
 ﻿using ApiCatalogoComRepository.Context;
 using ApiCatalogoComRepository.Models;
+using ApiCatalogoComRepository.Pagination;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiCatalogoComRepository.Repository
@@ -11,9 +12,18 @@ namespace ApiCatalogoComRepository.Repository
 
         }
 
-        public IEnumerable<Categoria> GetCategoriasProdutos()
+        public PageList<Categoria> GetCategorias(CategoriasParameters categoriasParameters)
         {
-            return Get().Include(x => x.Produtos);
+            return PageList<Categoria>.ToPageList(Get().OrderBy(on => on.Nome),
+                categoriasParameters.PageNumber,
+                categoriasParameters.PageSize);
+        }
+        public PageList<Categoria> GetCategoriasProdutos(CategoriasParameters categoriasParameters)
+        {
+            return PageList<Categoria>.ToPageList(Get().Include(x => x.Produtos),
+                categoriasParameters.PageNumber,
+                categoriasParameters.PageSize);
+                
         }
 
     }

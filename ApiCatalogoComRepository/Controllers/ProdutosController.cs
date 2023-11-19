@@ -1,4 +1,4 @@
-﻿using ApiCatalogoComRepository.Context;
+﻿
 using ApiCatalogoComRepository.DTOs;
 using ApiCatalogoComRepository.Models;
 using ApiCatalogoComRepository.Pagination;
@@ -25,9 +25,19 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpGet("menorpreco")]
-    public ActionResult<IEnumerable<ProdutoDTO>> GetProdutosPrecos()
+    public ActionResult<IEnumerable<ProdutoDTO>> GetProdutosPrecos([FromQuery]ProdutosParameters produtosParameters)
     {
-        var produtos = _uof.ProdutoRepository.GetProdutosPorPreco().ToList();
+        var produtos = _uof.ProdutoRepository.GetProdutosPorPreco(produtosParameters);
+        var metadata = new
+        {
+            produtos.TotalCount,
+            produtos.PageSize,
+            produtos.CurrentPage,
+            produtos.TotalPages,
+            produtos.HasNext,
+            produtos.HasPrevious
+        };
+        Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
         var produtosDto = _mapper.Map<List<ProdutoDTO>>(produtos);
         return Ok(produtosDto);
     }

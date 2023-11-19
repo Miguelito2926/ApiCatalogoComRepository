@@ -1,6 +1,7 @@
 ﻿using ApiCatalogoComRepository.Context;
 using ApiCatalogoComRepository.Models;
 using ApiCatalogoComRepository.Pagination;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ApiCatalogoComRepository.Repository
 {
@@ -20,9 +21,17 @@ namespace ApiCatalogoComRepository.Repository
               return PageList<Produto>.ToPageList(Get().OrderBy(on => on.Nome),
                   produtosParameters.PageNumber, produtosParameters.PageSize);
         }
-        public IEnumerable<Produto> GetProdutosPorPreco() 
+        /* public IEnumerable<Produto> GetProdutosPorPreco() 
+         {
+             return Get().OrderBy(c => c.Preco).ToList();
+         }*/
+
+        public PageList<Produto> GetProdutosPorPreco(ProdutosParameters produtosParameters)
         {
-            return Get().OrderBy(c => c.Preco).ToList();
+            return PageList<Produto>.ToPageList(Get().OrderBy(on => on.Preco),
+                produtosParameters.PageNumber,
+                produtosParameters.PageSize);
+
         }
     }
 }

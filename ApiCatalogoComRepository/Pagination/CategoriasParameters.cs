@@ -1,6 +1,6 @@
 ﻿namespace ApiCatalogoComRepository.Pagination
 {
-    public class ProdutosParameters : QueryStringParameters
+    public class CategoriasParameters : QueryStringParameters
     {
     }
 }
