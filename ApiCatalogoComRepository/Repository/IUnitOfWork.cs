@@ -1,5 +1,5 @@
 ﻿
-using Microsoft.EntityFrameworkCore;
+
 
 namespace ApiCatalogoComRepository.Repository
 {
@@ -7,8 +7,6 @@ namespace ApiCatalogoComRepository.Repository
     {
         IProdutoRepository ProdutoRepository { get; }
         ICategoriaRepository CategoriaRepository { get; }
-        object CategoriasRepository { get; }
-
         void Commit();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ApiCatalogoComRepository.Context;
 using ApiCatalogoComRepository.Models;
+using ApiCatalogoComRepository.Pagination;
 
 namespace ApiCatalogoComRepository.Repository
 {
@@ -9,7 +10,15 @@ namespace ApiCatalogoComRepository.Repository
         {
         }
 
-        public IEnumerable<Produto> GetProdutosPorPreco()
+        public IEnumerable<Produto> GetProdutos(ProdutosParameters produtosParameters)
+        {
+            return Get()
+                .OrderBy(on => on.Nome)
+                .Skip((produtosParameters.PageNumber - 1) * produtosParameters.PageSize)
+                .Take(produtosParameters.PageSize)
+                .ToList();
+        }
+        public IEnumerable<Produto> GetProdutosPorPreco() 
         {
             return Get().OrderBy(c => c.Preco).ToList();
         }

@@ -1,6 +1,7 @@
 ﻿using ApiCatalogoComRepository.Context;
 using ApiCatalogoComRepository.DTOs;
 using ApiCatalogoComRepository.Models;
+using ApiCatalogoComRepository.Pagination;
 using ApiCatalogoComRepository.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -31,9 +32,9 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<ProdutoDTO>> Get()
+    public ActionResult<IEnumerable<ProdutoDTO>> Get([FromQuery] ProdutosParameters produtosParameters)
     {
-        var produtos = _uof.ProdutoRepository.Get().ToList();
+        var produtos = _uof.ProdutoRepository.GetProdutos(produtosParameters).ToList();
         var ProdutosDto = _mapper.Map<List<ProdutoDTO>>(produtos);
         return ProdutosDto;
     }
