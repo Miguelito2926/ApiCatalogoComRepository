@@ -1,7 +1,7 @@
 ﻿using ApiCatalogoComRepository.Context;
 using ApiCatalogoComRepository.Models;
 using ApiCatalogoComRepository.Pagination;
-using Microsoft.AspNetCore.SignalR;
+
 
 namespace ApiCatalogoComRepository.Repository
 {
